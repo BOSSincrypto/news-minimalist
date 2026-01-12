@@ -4,9 +4,10 @@ on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
-  push:
-    branches:
-      - main
+
+concurrency:
+  group: update-news
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -19,6 +20,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,7 +44,9 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add data/
           git diff --staged --quiet || git commit -m "Update news data - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-          git push
+          git fetch origin main
+          git rebase origin/main || true
+          git push || git push --force-with-lease
 
   build-and-deploy:
     needs: update-news
