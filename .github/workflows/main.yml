@@ -30,7 +30,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install feedparser requests
 
-      - name: Fetch news and generate JSON
+      - name: Fetch news and generate JSON with Russian summaries
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: python scripts/fetch_news.py
 
       - name: Commit and push data files
