@@ -28,6 +28,7 @@ permissions:
 jobs:
   update-news:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,7 +49,8 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER_MODEL: ${{ inputs.model || vars.OPENROUTER_MODEL || 'qwen/qwen3-235b-a22b-2507' }}
-          MAX_SUMMARIES_PER_RUN: ${{ inputs.max_summaries || vars.MAX_SUMMARIES_PER_RUN || '0' }}
+          MAX_SUMMARIES_PER_RUN: ${{ inputs.max_summaries || vars.MAX_SUMMARIES_PER_RUN || '100' }}
+          MIN_SIGNIFICANCE_FOR_SUMMARY: ${{ vars.MIN_SIGNIFICANCE_FOR_SUMMARY || '3.9' }}
         run: |
           echo "Using model: $OPENROUTER_MODEL"
           echo "Max summaries: $MAX_SUMMARIES_PER_RUN"
@@ -67,6 +69,7 @@ jobs:
   build-and-deploy:
     needs: update-news
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
