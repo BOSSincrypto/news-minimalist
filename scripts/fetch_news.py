@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 Fetch news from RSS feeds, score articles, cluster similar ones,
+generate AI summaries in Russian via OpenRouter API,
 and generate static JSON files for GitHub Pages.
 """
 
@@ -8,11 +9,18 @@ import json
 import hashlib
 import re
 import random
+import os
+import time
 from datetime import datetime, timedelta
 from collections import defaultdict
 from pathlib import Path
 import feedparser
 import requests
+
+# Configuration from environment variables (can be set via GitHub Variables)
+OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
+OPENROUTER_MODEL = os.environ.get('OPENROUTER_MODEL', 'qwen/qwen3-235b-a22b-2507')
+MAX_SUMMARIES_PER_RUN = int(os.environ.get('MAX_SUMMARIES_PER_RUN', '50'))
 
 RSS_FEEDS = {
     "politics": [
@@ -58,6 +66,70 @@ RSS_FEEDS = {
 
 def generate_id(title: str, source: str) -> str:
     return hashlib.md5(f"{title}:{source}".encode()).hexdigest()[:12]
+
+
+def generate_russian_summary(title: str, description: str) -> str:
+    """Generate a Russian summary using OpenRouter API."""
+    if not OPENROUTER_API_KEY:
+        return ""
+    
+    try:
+        prompt = f"""Напиши краткое резюме (2-3 предложения) на русском языке для следующей новости:
+
+Заголовок: {title}
+Описание: {description}
+
+Резюме должно быть информативным и объективным. Отвечай только резюме, без дополнительных комментариев."""
+
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://github.com/BOSSincrypto/news-minimalist",
+                "X-Title": "News Minimalist"
+            },
+            json={
+                "model": OPENROUTER_MODEL,
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ],
+                "max_tokens": 300,
+                "temperature": 0.7
+            },
+            timeout=30
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            summary = data.get('choices', [{}])[0].get('message', {}).get('content', '')
+            # Clean up the summary - remove thinking tags if present
+            summary = re.sub(r'<think>.*?</think>', '', summary, flags=re.DOTALL).strip()
+            return summary
+        else:
+            print(f"OpenRouter API error: {response.status_code} - {response.text}")
+            return ""
+    except Exception as e:
+        print(f"Error generating summary: {e}")
+        return ""
+
+
+def load_existing_summaries(output_dir: Path) -> dict:
+    """Load existing summaries from articles_by_id.json to avoid re-generating."""
+    summaries = {}
+    articles_file = output_dir / 'articles_by_id.json'
+    if articles_file.exists():
+        try:
+            with open(articles_file, 'r') as f:
+                existing = json.load(f)
+                for article_id, article in existing.items():
+                    # Only keep summaries that look like AI-generated Russian text
+                    summary = article.get('summary', '')
+                    if summary and any(c in summary for c in 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя'):
+                        summaries[article_id] = summary
+        except Exception as e:
+            print(f"Error loading existing summaries: {e}")
+    return summaries
 
 
 def extract_source_domain(url: str) -> str:
@@ -257,6 +329,13 @@ def get_time_ago(dt: datetime) -> str:
 def main():
     print("Fetching news from RSS feeds...")
     
+    output_dir = Path(__file__).parent.parent / 'data'
+    output_dir.mkdir(exist_ok=True)
+    
+    # Load existing Russian summaries to avoid re-generating
+    existing_summaries = load_existing_summaries(output_dir)
+    print(f"Loaded {len(existing_summaries)} existing Russian summaries")
+    
     all_raw_articles = []
     for category, feeds in RSS_FEEDS.items():
         for feed_url in feeds:
@@ -276,10 +355,14 @@ def main():
         scores = calculate_significance_score(raw['title'], raw['summary'], raw['source'])
         final_category = assign_category(raw['title'], raw['summary'], raw['category'])
         
+        # Use existing Russian summary if available, otherwise use RSS description
+        summary = existing_summaries.get(article_id, raw['summary'])
+        
         processed_articles[article_id] = {
             'id': article_id,
             'title': raw['title'],
-            'summary': raw['summary'],
+            'summary': summary,
+            'original_description': raw['summary'],  # Keep original for AI generation
             'url': raw['url'],
             'source': raw['source'],
             'category': final_category,
@@ -294,10 +377,41 @@ def main():
             'published_at': raw['published_at'].isoformat(),
             'coverage_count': 1,
             'related_ids': [],
-            'language': 'English',
+            'language': 'Russian' if article_id in existing_summaries else 'English',
         }
     
     print(f"Unique articles: {len(processed_articles)}")
+    
+    # Generate Russian summaries for articles that don't have them yet
+    if OPENROUTER_API_KEY:
+        # Sort by significance score and get top articles without Russian summaries
+        articles_needing_summary = [
+            a for a in processed_articles.values()
+            if a['id'] not in existing_summaries
+        ]
+        articles_needing_summary.sort(key=lambda x: x['significance_score'], reverse=True)
+        
+        # Limit to top N articles to control API costs
+        to_summarize = articles_needing_summary[:MAX_SUMMARIES_PER_RUN]
+        
+        print(f"Generating Russian summaries for {len(to_summarize)} articles...")
+        
+        for i, article in enumerate(to_summarize):
+            print(f"  [{i+1}/{len(to_summarize)}] Summarizing: {article['title'][:50]}...")
+            russian_summary = generate_russian_summary(
+                article['title'],
+                article['original_description']
+            )
+            if russian_summary:
+                processed_articles[article['id']]['summary'] = russian_summary
+                processed_articles[article['id']]['language'] = 'Russian'
+            
+            # Small delay to avoid rate limiting
+            time.sleep(0.5)
+        
+        print(f"Generated {len([a for a in processed_articles.values() if a['language'] == 'Russian'])} Russian summaries")
+    else:
+        print("OPENROUTER_API_KEY not set, skipping Russian summary generation")
     
     articles_list = list(processed_articles.values())
     clusters = cluster_articles(articles_list)
@@ -331,9 +445,6 @@ def main():
     for article in processed_articles.values():
         pub_date = datetime.fromisoformat(article['published_at'])
         article['time_ago'] = get_time_ago(pub_date)
-    
-    output_dir = Path(__file__).parent.parent / 'data'
-    output_dir.mkdir(exist_ok=True)
     
     with open(output_dir / 'articles.json', 'w') as f:
         json.dump({'articles': list(processed_articles.values())}, f, indent=2)
