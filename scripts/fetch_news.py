@@ -22,6 +22,8 @@ OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
 OPENROUTER_MODEL = os.environ.get('OPENROUTER_MODEL', 'qwen/qwen3-235b-a22b-2507')
 # Set to 0 or empty to process all articles (no limit)
 MAX_SUMMARIES_PER_RUN = int(os.environ.get('MAX_SUMMARIES_PER_RUN', '0')) or None
+# Minimum significance score for AI summary generation (saves API costs)
+MIN_SIGNIFICANCE_FOR_SUMMARY = float(os.environ.get('MIN_SIGNIFICANCE_FOR_SUMMARY', '3.9'))
 
 RSS_FEEDS = {
     "politics": [
@@ -52,7 +54,6 @@ RSS_FEEDS = {
         "https://www.wired.com/feed/rss",
         "https://feeds.arstechnica.com/arstechnica/index",
         "https://www.theguardian.com/uk/technology/rss",
-        "https://feeds.feedburner.com/TechCrunch/",
         "https://www.engadget.com/rss.xml",
         "https://www.cnet.com/rss/news/",
     ],
@@ -67,7 +68,6 @@ RSS_FEEDS = {
         "https://www.space.com/feeds/all",
     ],
     "environment": [
-        "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
         "https://www.theguardian.com/environment/rss",
         "https://rss.nytimes.com/services/xml/rss/nyt/Climate.xml",
         "https://grist.org/feed/",
@@ -86,8 +86,6 @@ RSS_FEEDS = {
         "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
         "https://www.theguardian.com/world/rss",
         "https://feeds.washingtonpost.com/rss/world",
-        "https://www.aljazeera.com/xml/rss/all.xml",
-        "https://feeds.reuters.com/Reuters/worldNews",
         "https://rss.dw.com/rdf/rss-en-world",
         "https://www.france24.com/en/rss",
     ],
@@ -431,16 +429,27 @@ def main():
     
     # Generate Russian summaries for articles that don't have them yet
     if OPENROUTER_API_KEY:
-        # Sort by significance score and get top articles without Russian summaries
+        # Get articles without Russian summaries
         articles_needing_summary = [
             a for a in processed_articles.values()
             if a['id'] not in existing_summaries
         ]
-        articles_needing_summary.sort(key=lambda x: x['significance_score'], reverse=True)
+        
+        # Filter by minimum significance score to save API costs
+        articles_above_threshold = [
+            a for a in articles_needing_summary
+            if a['significance_score'] > MIN_SIGNIFICANCE_FOR_SUMMARY
+        ]
+        skipped_count = len(articles_needing_summary) - len(articles_above_threshold)
+        
+        # Sort by significance score (highest first)
+        articles_above_threshold.sort(key=lambda x: x['significance_score'], reverse=True)
         
         # Optionally limit to top N articles (set MAX_SUMMARIES_PER_RUN env var to limit)
-        to_summarize = articles_needing_summary[:MAX_SUMMARIES_PER_RUN] if MAX_SUMMARIES_PER_RUN else articles_needing_summary
+        to_summarize = articles_above_threshold[:MAX_SUMMARIES_PER_RUN] if MAX_SUMMARIES_PER_RUN else articles_above_threshold
         
+        print(f"Articles needing summary: {len(articles_needing_summary)}")
+        print(f"Skipped (significance <= {MIN_SIGNIFICANCE_FOR_SUMMARY}): {skipped_count}")
         print(f"Generating Russian summaries for {len(to_summarize)} articles...")
         
         for i, article in enumerate(to_summarize):
