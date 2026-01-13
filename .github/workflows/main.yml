@@ -4,6 +4,17 @@ on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
+    inputs:
+      model:
+        description: 'AI Model for summaries (e.g., qwen/qwen3-235b-a22b-2507, openai/gpt-4o-mini)'
+        required: false
+        default: ''
+        type: string
+      max_summaries:
+        description: 'Max number of summaries to generate per run'
+        required: false
+        default: '50'
+        type: string
 
 concurrency:
   group: update-news
@@ -36,7 +47,12 @@ jobs:
       - name: Fetch news and generate JSON with Russian summaries
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-        run: python scripts/fetch_news.py
+          OPENROUTER_MODEL: ${{ inputs.model || vars.OPENROUTER_MODEL || 'qwen/qwen3-235b-a22b-2507' }}
+          MAX_SUMMARIES_PER_RUN: ${{ inputs.max_summaries || vars.MAX_SUMMARIES_PER_RUN || '50' }}
+        run: |
+          echo "Using model: $OPENROUTER_MODEL"
+          echo "Max summaries: $MAX_SUMMARIES_PER_RUN"
+          python scripts/fetch_news.py
 
       - name: Commit and push data files
         run: |
