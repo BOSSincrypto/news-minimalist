@@ -20,46 +20,93 @@ import requests
 # Configuration from environment variables (can be set via GitHub Variables)
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
 OPENROUTER_MODEL = os.environ.get('OPENROUTER_MODEL', 'qwen/qwen3-235b-a22b-2507')
-MAX_SUMMARIES_PER_RUN = int(os.environ.get('MAX_SUMMARIES_PER_RUN', '50'))
+# Set to 0 or empty to process all articles (no limit)
+MAX_SUMMARIES_PER_RUN = int(os.environ.get('MAX_SUMMARIES_PER_RUN', '0')) or None
 
 RSS_FEEDS = {
     "politics": [
         "https://feeds.bbci.co.uk/news/politics/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
         "https://feeds.npr.org/1014/rss.xml",
+        "https://www.theguardian.com/politics/rss",
+        "https://feeds.washingtonpost.com/rss/politics",
+        "https://www.aljazeera.com/xml/rss/all.xml",
+        "https://feeds.reuters.com/Reuters/worldNews",
+        "https://rss.dw.com/rdf/rss-en-all",
     ],
     "business": [
         "https://feeds.bbci.co.uk/news/business/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+        "https://www.theguardian.com/uk/business/rss",
+        "https://feeds.bloomberg.com/markets/news.rss",
+        "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+        "https://feeds.ft.com/rss/home/uk",
+        "https://feeds.reuters.com/reuters/businessNews",
+        "https://fortune.com/feed/",
     ],
     "technology": [
         "https://feeds.bbci.co.uk/news/technology/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
         "https://www.theverge.com/rss/index.xml",
         "https://techcrunch.com/feed/",
+        "https://www.wired.com/feed/rss",
+        "https://feeds.arstechnica.com/arstechnica/index",
+        "https://www.theguardian.com/uk/technology/rss",
+        "https://feeds.feedburner.com/TechCrunch/",
+        "https://www.engadget.com/rss.xml",
+        "https://www.cnet.com/rss/news/",
     ],
     "science": [
         "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",
+        "https://www.theguardian.com/science/rss",
+        "https://www.sciencedaily.com/rss/all.xml",
+        "https://www.newscientist.com/feed/home/",
+        "https://phys.org/rss-feed/",
+        "https://www.nature.com/nature.rss",
+        "https://www.space.com/feeds/all",
     ],
     "environment": [
         "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+        "https://www.theguardian.com/environment/rss",
+        "https://rss.nytimes.com/services/xml/rss/nyt/Climate.xml",
+        "https://grist.org/feed/",
+        "https://insideclimatenews.org/feed/",
     ],
     "health": [
         "https://feeds.bbci.co.uk/news/health/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Health.xml",
+        "https://www.theguardian.com/lifeandstyle/health-and-wellbeing/rss",
+        "https://www.statnews.com/feed/",
+        "https://www.webmd.com/rss/rss.aspx",
+        "https://feeds.medscape.com/cx/feeds/rssfeeds.aspx?feed=news",
     ],
     "society": [
         "https://feeds.bbci.co.uk/news/world/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+        "https://www.theguardian.com/world/rss",
+        "https://feeds.washingtonpost.com/rss/world",
+        "https://www.aljazeera.com/xml/rss/all.xml",
+        "https://feeds.reuters.com/Reuters/worldNews",
+        "https://rss.dw.com/rdf/rss-en-world",
+        "https://www.france24.com/en/rss",
     ],
     "culture": [
         "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",
+        "https://www.theguardian.com/culture/rss",
+        "https://variety.com/feed/",
+        "https://www.hollywoodreporter.com/feed/",
+        "https://pitchfork.com/feed/feed-news/rss",
+        "https://www.rollingstone.com/feed/",
     ],
     "sports": [
         "https://feeds.bbci.co.uk/sport/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml",
+        "https://www.theguardian.com/uk/sport/rss",
+        "https://www.espn.com/espn/rss/news",
+        "https://sports.yahoo.com/rss/",
+        "https://www.skysports.com/rss/12040",
     ],
 }
 
@@ -391,8 +438,8 @@ def main():
         ]
         articles_needing_summary.sort(key=lambda x: x['significance_score'], reverse=True)
         
-        # Limit to top N articles to control API costs
-        to_summarize = articles_needing_summary[:MAX_SUMMARIES_PER_RUN]
+        # Optionally limit to top N articles (set MAX_SUMMARIES_PER_RUN env var to limit)
+        to_summarize = articles_needing_summary[:MAX_SUMMARIES_PER_RUN] if MAX_SUMMARIES_PER_RUN else articles_needing_summary
         
         print(f"Generating Russian summaries for {len(to_summarize)} articles...")
         
