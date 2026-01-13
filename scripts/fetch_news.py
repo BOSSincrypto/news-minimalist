@@ -17,9 +17,10 @@ from pathlib import Path
 import feedparser
 import requests
 
+# Configuration from environment variables (can be set via GitHub Variables)
 OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
-OPENROUTER_MODEL = "qwen/qwen3-235b-a22b-2507"
-MAX_SUMMARIES_PER_RUN = 50  # Limit API calls per run to control costs
+OPENROUTER_MODEL = os.environ.get('OPENROUTER_MODEL', 'qwen/qwen3-235b-a22b-2507')
+MAX_SUMMARIES_PER_RUN = int(os.environ.get('MAX_SUMMARIES_PER_RUN', '50'))
 
 RSS_FEEDS = {
     "politics": [
