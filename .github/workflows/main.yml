@@ -93,6 +93,11 @@ jobs:
       - name: Copy data to dist
         run: cp -r data dist/
 
+      - name: Copy SEO files to dist
+        run: |
+          cp robots.txt dist/robots.txt
+          cp sitemap.xml dist/sitemap.xml
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
