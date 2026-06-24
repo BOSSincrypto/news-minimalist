@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bossincrypto.github.io/news-minimalist/sitemap.xml

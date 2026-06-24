@@ -1,416 +1,274 @@
-# News Minimalist
+<div align="center">
 
-Агрегатор новостей с AI-ранжированием по значимости. Полностью работает на GitHub Pages с автоматическим обновлением через GitHub Actions.
+<!-- HERO BANNER -->
+<a href="https://bossincrypto.github.io/news-minimalist/">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:3b82f6,50:8b5cf6,100:ec4899&height=280&section=header&text=News%20Minimalist&fontSize=70&fontAlignY=38&desc=AI-powered%20news%20aggregator%20ranked%20by%20significance&descAlignY=55&descSize=18&animation=fadeIn" alt="News Minimalist hero banner" />
+</a>
 
-## Содержание
+<!-- BILINGUAL SLOGAN -->
+<h3>🌍 Curated world news, ranked by AI significance — not clicks</h3>
+<h4>📰 Отобранные мировые новости, ранжированные ИИ по значимости — не по кликам</h4>
 
-- [Как это работает](#как-это-работает)
-- [Быстрый старт](#быстрый-старт)
-- [Настройка AI-модели](#настройка-ai-модели)
-- [Все настройки](#все-настройки)
-- [Структура проекта](#структура-проекта)
-- [Источники новостей](#источники-новостей)
-- [Функции сайта](#функции-сайта)
-- [Локальная разработка](#локальная-разработка)
-- [Устранение неполадок](#устранение-неполадок)
+<!-- BADGES -->
+<p>
+  <a href="https://github.com/BOSSincrypto/news-minimalist/stargazers">
+    <img src="https://img.shields.io/github/stars/BOSSincrypto/news-minimalist?style=for-the-badge&logo=github&color=FACC15" alt="GitHub stars" />
+  </a>
+  <a href="https://github.com/BOSSincrypto/news-minimalist/network/members">
+    <img src="https://img.shields.io/github/forks/BOSSincrypto/news-minimalist?style=for-the-badge&logo=github&color=60A5FA" alt="GitHub forks" />
+  </a>
+  <a href="https://github.com/BOSSincrypto/news-minimalist/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/BOSSincrypto/news-minimalist?style=for-the-badge&color=34D399" alt="License" />
+  </a>
+  <a href="https://github.com/BOSSincrypto/news-minimalist/commits/main">
+    <img src="https://img.shields.io/github/last-commit/BOSSincrypto/news-minimalist?style=for-the-badge&logo=git&color=A78BFA" alt="Last commit" />
+  </a>
+</p>
+
+<p>
+  <a href="https://bossincrypto.github.io/news-minimalist/">
+    <img src="https://img.shields.io/github/deployments/BOSSincrypto/news-minimalist/github-pages?style=for-the-badge&logo=githubpages&label=GitHub%20Pages&color=22D3EE" alt="GitHub Pages status" />
+  </a>
+  <a href="https://github.com/BOSSincrypto/news-minimalist/actions/workflows/main.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/BOSSincrypto/news-minimalist/main.yml?style=for-the-badge&logo=githubactions&label=Update%20News&color=FB923C" alt="Update News workflow" />
+  </a>
+</p>
+
+<!-- TECH STACK BADGES -->
+<p>
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="shadcn/ui" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" />
+  <img src="https://img.shields.io/badge/OpenRouter-6842C6?style=for-the-badge&logo=openai&logoColor=white" alt="OpenRouter" />
+</p>
+
+</div>
 
 ---
 
-## Как это работает
+<!-- TABLE OF CONTENTS -->
+## 📑 Table of Contents / Оглавление
 
-1. **GitHub Actions** запускается каждый час по расписанию
-2. Python-скрипт загружает новости из RSS-лент
-3. AI (OpenRouter API) генерирует краткие резюме на русском языке
-4. Статьи оцениваются по значимости (0-10) на основе анализа ключевых слов
-5. Похожие статьи группируются (показывается "coverage" - сколько источников освещают тему)
-6. Генерируются статические JSON-файлы
-7. React-фронтенд читает JSON и отображает новости
-8. GitHub Pages хостит статический сайт
+- [✨ Features / Возможности](#-features--возможности)
+- [🖼️ Demo / Демо](#%EF%B8%8F-demo--демо)
+- [⚡ Quick Start / Быстрый старт](#-quick-start--быстрый-старт)
+- [🛠 Tech Stack / Стек технологий](#-tech-stack--стек-технологий)
+- [🏗 Project Structure / Структура проекта](#-project-structure--структура-проекта)
+- [🔧 Configuration / Настройка](#-configuration--настройка)
+- [🤝 Contributing / Участие](#-contributing--участие)
+- [📜 License / Лицензия](#-license--лицензия)
 
 ---
 
-## Быстрый старт
+## ✨ Features / Возможности
 
-### Шаг 1: Форк репозитория
+| # | English | Русский |
+|---|---------|---------|
+| 🤖 | **AI Significance Scoring** — every article is scored 0–10 by an LLM based on real-world impact | **Оценка значимости ИИ** — каждая статья оценивается 0–10 на основе реального влияния |
+| 📰 | **RSS Aggregation** — collects headlines from trusted global sources | **Агрегация RSS** — собирает заголовки из проверенных мировых источников |
+| 🔗 | **Coverage Clustering** — groups related articles and shows how many sources cover the story | **Кластеризация по охвату** — группирует похожие статьи и показывает число источников |
+| 🌙 | **Dark Mode** — automatic/system-aware theme switching | **Тёмная тема** — автоматическое переключение на основе системных настроек |
+| 🏷️ | **Category Filters** — politics, business, tech, science, health, sports and more | **Фильтры по категориям** — политика, бизнес, технологии, наука, здоровье, спорт и др. |
+| 🔄 | **Auto-Updates** — GitHub Actions fetches & deploys fresh news every 6 hours | **Автообновление** — GitHub Actions обновляет и деплоит новости каждые 6 часов |
+| 📊 | **Interactive Histogram** — visual distribution of significance scores | **Интерактивная гистограмма** — визуальное распределение оценок значимости |
+| 🚀 | **GitHub Pages Hosting** — 100% free static hosting | **Хостинг на GitHub Pages** — полностью бесплатный статический хостинг |
 
-Нажмите кнопку "Fork" в правом верхнем углу репозитория.
+<details>
+<summary>📰 Click to see news sources / Нажмите, чтобы увидеть источники новостей</summary>
 
-### Шаг 2: Добавьте API-ключ OpenRouter
+| Category / Категория | Sources / Источники |
+|----------------------|---------------------|
+| Politics / Политика | BBC News Politics, New York Times Politics, NPR Politics |
+| Business / Бизнес | BBC News Business, New York Times Business |
+| Technology / Технологии | BBC News Technology, New York Times Technology, The Verge, TechCrunch |
+| Science / Наука | BBC News Science, New York Times Science |
+| Health / Здоровье | BBC News Health, New York Times Health |
+| Society / Общество | BBC News World, New York Times World |
+| Culture / Культура | BBC News Entertainment & Arts, New York Times Arts |
+| Sports / Спорт | BBC Sport, New York Times Sports |
 
-1. Зарегистрируйтесь на [OpenRouter](https://openrouter.ai/)
-2. Получите API-ключ в разделе Keys
-3. В вашем репозитории: **Settings** → **Secrets and variables** → **Actions**
-4. Нажмите **New repository secret**
-5. Name: `OPENROUTER_API_KEY`
-6. Value: ваш API-ключ
-7. Нажмите **Add secret**
+> To add your own source, edit `scripts/fetch_news.py` → `RSS_FEEDS`.
+> Чтобы добавить свой источник, отредактируйте `scripts/fetch_news.py` → `RSS_FEEDS`.
 
-### Шаг 3: Включите GitHub Pages
+</details>
 
-1. **Settings** → **Pages**
-2. Source: **GitHub Actions**
-3. Сохраните
+---
 
-### Шаг 4: Запустите workflow
+## 🖼️ Demo / Демо
 
-1. Перейдите во вкладку **Actions**
-2. Выберите **Update News**
-3. Нажмите **Run workflow** → **Run workflow**
+🌐 **Live site / Живой сайт:** [https://bossincrypto.github.io/news-minimalist/](https://bossincrypto.github.io/news-minimalist/)
 
-Через 2-3 минуты сайт будет доступен по адресу:
+<div align="center">
+  <a href="https://bossincrypto.github.io/news-minimalist/">
+    <img src="https://socialify.git.ci/BOSSincrypto/news-minimalist/image?description=1&font=Source%20Code%20Pro&forks=1&issues=1&language=1&name=1&owner=1&pattern=Solid&pulls=1&stargazers=1&theme=Auto" alt="News Minimalist preview card" width="640" />
+  </a>
+</div>
+
+---
+
+## ⚡ Quick Start / Быстрый старт
+
+### 1️⃣ Fork the repository / Сделайте форк репозитория
+
+Click **Fork** in the top-right corner of [BOSSincrypto/news-minimalist](https://github.com/BOSSincrypto/news-minimalist).
+
+Нажмите **Fork** в правом верхнем углу [BOSSincrypto/news-minimalist](https://github.com/BOSSincrypto/news-minimalist).
+
+### 2️⃣ Add OpenRouter API key / Добавьте API-ключ OpenRouter
+
+1. Sign up at [OpenRouter](https://openrouter.ai/) / Зарегистрируйтесь на [OpenRouter](https://openrouter.ai/)
+2. Create a key / Создайте ключ
+3. In your fork: **Settings → Secrets and variables → Actions → New repository secret**
+4. Name: `OPENROUTER_API_KEY`
+5. Value: your key / ваш ключ
+
+### 3️⃣ Enable GitHub Pages / Включите GitHub Pages
+
+**Settings → Pages → Source: GitHub Actions**
+
+### 4️⃣ Run the workflow / Запустите workflow
+
+**Actions → Update News → Run workflow → Run workflow**
+
+Your site will be live in 2–3 minutes at:
+
+```
+https://YOUR_USERNAME.github.io/news-minimalist/
+```
+
+Сайт будет доступен через 2–3 минуты по адресу:
+
 ```
 https://YOUR_USERNAME.github.io/news-minimalist/
 ```
 
 ---
 
-## Настройка AI-модели
+## 🛠 Tech Stack / Стек технологий
 
-### Способ 1: Постоянная настройка через Variables
+### Frontend / Фронтенд
+- ⚛️ [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- ⚡ [Vite](https://vitejs.dev/)
+- 🎨 [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
+- 📊 [Recharts](https://recharts.org/) for data visualization
+- 🔗 [Lucide React](https://lucide.dev/) icons
 
-Для изменения модели на постоянной основе:
-
-1. **Settings** → **Secrets and variables** → **Actions** → **Variables**
-2. Нажмите **New repository variable**
-3. Добавьте переменную:
-
-| Name | Value | Описание |
-|------|-------|----------|
-| `OPENROUTER_MODEL` | `qwen/qwen3-235b-a22b-2507` | Модель AI для генерации резюме |
-| `MAX_SUMMARIES_PER_RUN` | `50` | Максимум резюме за один запуск |
-
-### Способ 2: Разовая настройка при ручном запуске
-
-При ручном запуске workflow можно указать модель:
-
-1. **Actions** → **Update News** → **Run workflow**
-2. Заполните поля:
-   - **Model**: название модели (например: `openai/gpt-4o-mini`)
-   - **Max summaries**: количество резюме
-
-### Приоритет настроек
-
-```
-Ручной ввод > Repository Variables > Значение по умолчанию
-```
-
-### Популярные модели OpenRouter
-
-| Модель | Описание | Цена |
-|--------|----------|------|
-| `qwen/qwen3-235b-a22b-2507` | Qwen 3 235B (по умолчанию) | Средняя |
-| `openai/gpt-4o-mini` | GPT-4o Mini | Низкая |
-| `openai/gpt-4o` | GPT-4o | Высокая |
-| `anthropic/claude-3.5-sonnet` | Claude 3.5 Sonnet | Высокая |
-| `google/gemini-pro-1.5` | Gemini Pro 1.5 | Средняя |
-| `meta-llama/llama-3.1-70b-instruct` | Llama 3.1 70B | Низкая |
-
-Полный список моделей: [OpenRouter Models](https://openrouter.ai/models)
+### Backend / Automation / Бэкенд / Автоматизация
+- 🐍 [Python 3.11](https://www.python.org/)
+- 📡 `feedparser` + `requests` for RSS fetching
+- 🤖 [OpenRouter](https://openrouter.ai/) LLM API for summaries & scoring
+- 🚀 [GitHub Actions](https://github.com/features/actions) for scheduled updates & Pages deployment
 
 ---
 
-## Все настройки
-
-### Secrets (секреты)
-
-Настраиваются в **Settings** → **Secrets and variables** → **Actions** → **Secrets**
-
-| Название | Обязательный | Описание |
-|----------|--------------|----------|
-| `OPENROUTER_API_KEY` | Да | API-ключ от OpenRouter для генерации резюме |
-
-### Variables (переменные)
-
-Настраиваются в **Settings** → **Secrets and variables** → **Actions** → **Variables**
-
-| Название | По умолчанию | Описание |
-|----------|--------------|----------|
-| `OPENROUTER_MODEL` | `qwen/qwen3-235b-a22b-2507` | Модель AI для генерации резюме |
-| `MAX_SUMMARIES_PER_RUN` | `50` | Максимальное количество резюме за один запуск workflow |
-
-### Расписание обновлений
-
-По умолчанию новости обновляются каждый час. Чтобы изменить расписание, отредактируйте файл `.github/workflows/main.yml`:
-
-```yaml
-on:
-  schedule:
-    - cron: '0 * * * *'  # Каждый час
-```
-
-Примеры cron-выражений:
-- `'0 * * * *'` - каждый час
-- `'*/30 * * * *'` - каждые 30 минут
-- `'0 */2 * * *'` - каждые 2 часа
-- `'0 0 * * *'` - раз в день в полночь
-- `'0 8,20 * * *'` - в 8:00 и 20:00
-
----
-
-## Структура проекта
+## 🏗 Project Structure / Структура проекта
 
 ```
 news-minimalist/
 ├── .github/
 │   └── workflows/
-│       └── main.yml          # GitHub Actions workflow
+│       ├── main.yml          # Scheduled news update + Pages deploy
+│       └── ci.yml            # PR / push CI build
 ├── data/
-│   ├── articles.json         # Список всех статей
-│   ├── articles_by_id.json   # Статьи по ID (для быстрого поиска)
-│   └── stats.json            # Статистика и гистограмма
+│   ├── articles.json         # All articles
+│   ├── articles_by_id.json   # Fast ID lookup
+│   └── stats.json            # Stats + histogram
 ├── scripts/
-│   └── fetch_news.py         # Python-скрипт для загрузки новостей
+│   └── fetch_news.py         # RSS fetcher + AI summarizer
 ├── src/
-│   ├── App.tsx               # Главный компонент
-│   ├── App.css               # Стили
-│   └── main.tsx              # Точка входа
-├── index.html                # HTML-шаблон
-├── package.json              # Зависимости Node.js
-├── requirements.txt          # Зависимости Python
-├── vite.config.ts            # Конфигурация Vite
-├── tailwind.config.js        # Конфигурация Tailwind CSS
-└── tsconfig.json             # Конфигурация TypeScript
-```
-
-### Описание файлов данных
-
-**data/articles.json**
-```json
-{
-  "articles": [
-    {
-      "id": "abc123def456",
-      "title": "Заголовок статьи",
-      "summary": "AI-сгенерированное резюме на русском",
-      "url": "https://source.com/article",
-      "source": "bbc.co.uk",
-      "category": "politics",
-      "significance_score": 7.5,
-      "coverage_count": 3,
-      "related_ids": ["id1", "id2"],
-      "published_at": "2024-01-15T10:30:00",
-      "time_ago": "2h",
-      "language": "Russian"
-    }
-  ]
-}
-```
-
-**data/stats.json**
-```json
-{
-  "total_articles": 350,
-  "high_significance_count": 45,
-  "histogram": {
-    "0.0": 5,
-    "0.5": 8,
-    "1.0": 12,
-    "...": "...",
-    "10.0": 2
-  },
-  "last_refresh": "2024-01-15T12:00:00"
-}
+│   ├── App.tsx               # Main React component
+│   ├── App.css               # App styles
+│   ├── components/ui/        # shadcn/ui components
+│   ├── hooks/                # React hooks
+│   ├── lib/                  # Utilities
+│   ├── index.css             # Global styles
+│   └── main.tsx              # Entry point
+├── index.html                # HTML template with SEO meta tags
+├── package.json              # Node dependencies
+├── requirements.txt          # Python dependencies
+├── tailwind.config.js        # Tailwind config
+├── vite.config.ts            # Vite config
+├── tsconfig.json             # TypeScript config
+├── robots.txt                # Search crawler rules
+├── sitemap.xml               # Sitemap for indexers
+├── LICENSE                   # MIT License
+└── README.md                 # This file
 ```
 
 ---
 
-## Источники новостей
+## 🔧 Configuration / Настройка
 
-### Политика
-- BBC News Politics
-- New York Times Politics
-- NPR Politics
+### Repository Secrets / Секреты репозитория
 
-### Бизнес
-- BBC News Business
-- New York Times Business
+| Secret | Required / Обязательный | Description / Описание |
+|--------|--------------------------|------------------------|
+| `OPENROUTER_API_KEY` | ✅ Yes / Да | OpenRouter API key for AI summaries / Ключ OpenRouter для ИИ-резюме |
 
-### Технологии
-- BBC News Technology
-- New York Times Technology
-- The Verge
-- TechCrunch
+### Repository Variables / Переменные репозитория
 
-### Наука
-- BBC News Science
-- New York Times Science
+| Variable | Default / По умолчанию | Description / Описание |
+|----------|------------------------|------------------------|
+| `OPENROUTER_MODEL` | `qwen/qwen3-235b-a22b-2507` | LLM model for summaries / Модель для резюме |
+| `MAX_SUMMARIES_PER_RUN` | `100` | Max summaries per run / Максимум резюме за запуск |
+| `MIN_SIGNIFICANCE_FOR_SUMMARY` | `3.9` | Minimum significance score to summarize / Минимальная значимость для резюме |
 
-### Здоровье
-- BBC News Health
-- New York Times Health
+### Schedule / Расписание
 
-### Общество
-- BBC News World
-- New York Times World
+The workflow runs every 6 hours by default. Edit `.github/workflows/main.yml`:
 
-### Культура
-- BBC News Entertainment & Arts
-- New York Times Arts
-
-### Спорт
-- BBC Sport
-- New York Times Sports
-
-### Добавление новых источников
-
-Отредактируйте файл `scripts/fetch_news.py`, раздел `RSS_FEEDS`:
-
-```python
-RSS_FEEDS = {
-    "politics": [
-        "https://feeds.bbci.co.uk/news/politics/rss.xml",
-        "https://your-new-source.com/rss.xml",  # Добавьте новый источник
-    ],
-    # ...
-}
+```yaml
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours / Каждые 6 часов
 ```
+
+<details>
+<summary>🕒 Common cron examples / Примеры cron</summary>
+
+| Cron | Meaning / Значение |
+|------|--------------------|
+| `0 * * * *` | Every hour / Каждый час |
+| `*/30 * * * *` | Every 30 minutes / Каждые 30 минут |
+| `0 */2 * * *` | Every 2 hours / Каждые 2 часа |
+| `0 0 * * *` | Daily at midnight / Каждый день в полночь |
+| `0 8,20 * * *` | At 08:00 and 20:00 / В 8:00 и 20:00 |
+
+</details>
 
 ---
 
-## Функции сайта
+## 🤝 Contributing / Участие
 
-### Оценка значимости (0-10)
+Contributions are welcome! / Приветствуется участие!
 
-Каждая статья получает оценку значимости на основе:
-- **Ключевые слова высокого влияния**: war, president, election, climate, breakthrough, etc.
-- **Ключевые слова среднего влияния**: policy, research, company, protest, etc.
-- **Авторитетность источника**: BBC, NYTimes, Reuters получают бонус
+1. Fork the repo / Сделайте форк
+2. Create a feature branch / Создайте ветку: `git checkout -b feature/amazing-feature`
+3. Commit your changes / Закоммитьте изменения: `git commit -m 'feat: add amazing feature'`
+4. Push to the branch / Запушьте в ветку: `git push origin feature/amazing-feature`
+5. Open a Pull Request / Откройте Pull Request
 
-### Фильтры по категориям
-
-- **Significant** (5-10) - важные новости
-- **Insignificant** (0-1) - малозначимые новости
-- **Positive** - позитивные новости
-- **politics, business, technology, science, environment, health, society, culture, sports**
-
-### Сортировка
-
-- **by significance** - по значимости (от высокой к низкой)
-- **by coverage** - по количеству источников
-- **by latest** - по времени публикации
-
-### Кластеризация статей
-
-Похожие статьи группируются вместе. Число в скобках показывает, сколько источников освещают эту тему:
-```
-[7.5] Заголовок статьи (BBC + 2)
-```
-
-### Детали статьи
-
-При клике на статью раскрываются:
-- **Summary** - AI-резюме на русском языке
-- **Source** - ссылка на оригинал
-- **Share** - поделиться
-- **Related articles** - связанные статьи из других источников
+Please keep code style consistent with the existing project.
+Пожалуйста, сохраняйте единый стиль кода с проектом.
 
 ---
 
-## Локальная разработка
+## 📜 License / Лицензия
 
-### Требования
+This project is licensed under the [MIT License](https://github.com/BOSSincrypto/news-minimalist/blob/main/LICENSE).
 
-- Node.js 18+
-- Python 3.9+
-- npm или yarn
-
-### Установка
-
-```bash
-# Клонирование репозитория
-git clone https://github.com/YOUR_USERNAME/news-minimalist.git
-cd news-minimalist
-
-# Установка зависимостей фронтенда
-npm install
-
-# Установка зависимостей Python
-pip install feedparser requests
-```
-
-### Запуск фронтенда
-
-```bash
-npm run dev
-```
-
-Сайт будет доступен по адресу: http://localhost:5173
-
-### Генерация данных локально
-
-```bash
-# Без AI-резюме
-python scripts/fetch_news.py
-
-# С AI-резюме (требуется API-ключ)
-export OPENROUTER_API_KEY="your-api-key"
-export OPENROUTER_MODEL="qwen/qwen3-235b-a22b-2507"
-export MAX_SUMMARIES_PER_RUN="10"
-python scripts/fetch_news.py
-```
-
-### Сборка для продакшена
-
-```bash
-npm run build
-```
-
-Собранные файлы будут в папке `dist/`.
+Этот проект распространяется под лицензией [MIT](https://github.com/BOSSincrypto/news-minimalist/blob/main/LICENSE).
 
 ---
 
-## Устранение неполадок
+<div align="center">
 
-### Workflow не запускается
+Made with ❤️ by [BOSSincrypto](https://github.com/BOSSincrypto)
 
-1. Проверьте, что GitHub Actions включен: **Settings** → **Actions** → **General**
-2. Убедитесь, что workflow файл существует: `.github/workflows/main.yml`
+⭐ Star this repo if you find it useful! / Поставьте ⭐, если проект оказался полезным!
 
-### Ошибка "git push rejected"
-
-Это происходит при конфликте версий. Workflow автоматически пытается решить это через rebase. Если ошибка повторяется:
-1. Подождите завершения текущего workflow
-2. Запустите workflow заново
-
-### Сайт показывает 0 статей
-
-1. Проверьте, что workflow успешно завершился (зеленая галочка в Actions)
-2. Убедитесь, что папка `data/` содержит JSON-файлы
-3. Проверьте, что в workflow есть шаг `Copy data to dist`
-
-### AI-резюме не генерируются
-
-1. Проверьте, что секрет `OPENROUTER_API_KEY` добавлен правильно
-2. Проверьте баланс на OpenRouter
-3. Посмотрите логи workflow на наличие ошибок API
-
-### Резюме на английском вместо русского
-
-Это значит, что для этих статей резюме еще не сгенерировано. Подождите следующего запуска workflow или увеличьте `MAX_SUMMARIES_PER_RUN`.
-
----
-
-## Стоимость
-
-### GitHub
-
-- **GitHub Pages**: бесплатно
-- **GitHub Actions**: 2000 минут/месяц бесплатно (достаточно для почасовых обновлений)
-
-### OpenRouter
-
-Стоимость зависит от выбранной модели. При 50 резюме в час (~1200 в день):
-- **qwen/qwen3-235b-a22b-2507**: ~$1-2/день
-- **openai/gpt-4o-mini**: ~$0.5-1/день
-- **meta-llama/llama-3.1-70b-instruct**: ~$0.3-0.5/день
-
-Для снижения расходов:
-- Уменьшите `MAX_SUMMARIES_PER_RUN`
-- Измените расписание на реже (каждые 2-4 часа)
-- Используйте более дешевую модель
-
----
-
-## Лицензия
-
-MIT License
+</div>
