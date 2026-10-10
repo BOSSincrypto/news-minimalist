@@ -40,7 +40,6 @@
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="shadcn/ui" />
   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" />
   <img src="https://img.shields.io/badge/OpenRouter-6842C6?style=for-the-badge&logo=openai&logoColor=white" alt="OpenRouter" />
@@ -71,10 +70,13 @@
 | 🤖 | **AI Significance Scoring** — every article is scored 0–10 by an LLM based on real-world impact | **Оценка значимости ИИ** — каждая статья оценивается 0–10 на основе реального влияния |
 | 📰 | **RSS Aggregation** — collects headlines from trusted global sources | **Агрегация RSS** — собирает заголовки из проверенных мировых источников |
 | 🔗 | **Coverage Clustering** — groups related articles and shows how many sources cover the story | **Кластеризация по охвату** — группирует похожие статьи и показывает число источников |
-| 🌙 | **Dark Mode** — automatic/system-aware theme switching | **Тёмная тема** — автоматическое переключение на основе системных настроек |
+| 🌙 | **Dark-only design** — single elegant dark theme, zero clutter | **Только тёмная тема** — единый элегантный тёмный дизайн |
+| 🔍 | **Live Search** — filter headlines and summaries as you type | **Живой поиск** — фильтрация заголовков и резюме в реальном времени |
+| 📤 | **Share** — native share sheet with clipboard fallback | **Поделиться** — нативный диалог шаринга с копированием ссылки |
 | 🏷️ | **Category Filters** — politics, business, tech, science, health, sports and more | **Фильтры по категориям** — политика, бизнес, технологии, наука, здоровье, спорт и др. |
 | 🔄 | **Auto-Updates** — GitHub Actions fetches & deploys fresh news every 6 hours | **Автообновление** — GitHub Actions обновляет и деплоит новости каждые 6 часов |
-| 📊 | **Interactive Histogram** — visual distribution of significance scores | **Интерактивная гистограмма** — визуальное распределение оценок значимости |
+| 📊 | **Interactive Histogram** — lightweight custom SVG chart, no chart library | **Интерактивная гистограмма** — лёгкий собственный SVG-график без библиотек |
+| 📡 | **RSS Feed** — auto-generated feed of top stories (`feed.xml`) | **RSS-лента** — автогенерация фида главных новостей (`feed.xml`) |
 | 🚀 | **GitHub Pages Hosting** — 100% free static hosting | **Хостинг на GitHub Pages** — полностью бесплатный статический хостинг |
 
 <details>
@@ -82,14 +84,14 @@
 
 | Category / Категория | Sources / Источники |
 |----------------------|---------------------|
-| Politics / Политика | BBC News Politics, New York Times Politics, NPR Politics |
+| Politics / Политика | BBC News Politics, New York Times Politics, NPR Politics, ProPublica |
 | Business / Бизнес | BBC News Business, New York Times Business |
-| Technology / Технологии | BBC News Technology, New York Times Technology, The Verge, TechCrunch |
-| Science / Наука | BBC News Science, New York Times Science |
+| Technology / Технологии | BBC News Technology, New York Times Technology, The Verge, TechCrunch, Hacker News, MIT Technology Review |
+| Science / Наука | BBC News Science, New York Times Science, Quanta Magazine |
 | Health / Здоровье | BBC News Health, New York Times Health |
-| Society / Общество | BBC News World, New York Times World |
+| Society / Общество | BBC News World, New York Times World, PBS NewsHour, Euronews, CBC |
 | Culture / Культура | BBC News Entertainment & Arts, New York Times Arts |
-| Sports / Спорт | BBC Sport, New York Times Sports |
+| Sports / Спорт | BBC Sport |
 
 > To add your own source, edit `scripts/fetch_news.py` → `RSS_FEEDS`.
 > Чтобы добавить свой источник, отредактируйте `scripts/fetch_news.py` → `RSS_FEEDS`.
@@ -151,17 +153,18 @@ https://YOUR_USERNAME.github.io/news-minimalist/
 ## 🛠 Tech Stack / Стек технологий
 
 ### Frontend / Фронтенд
-- ⚛️ [React 18](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- ⚡ [Vite](https://vitejs.dev/)
-- 🎨 [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/)
-- 📊 [Recharts](https://recharts.org/) for data visualization
-- 🔗 [Lucide React](https://lucide.dev/) icons
+- ⚛️ [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- ⚡ [Vite 8](https://vite.dev/) (Rolldown + Oxc)
+- 🎨 [Tailwind CSS v4](https://tailwindcss.com/)
+- 📊 Custom lightweight SVG histogram — no chart library
+- 🔗 [Lucide](https://lucide.dev/) icons
+- 🌙 Dark-only theme, zero unused dependencies
 
 ### Backend / Automation / Бэкенд / Автоматизация
-- 🐍 [Python 3.11](https://www.python.org/)
-- 📡 `feedparser` + `requests` for RSS fetching
+- 🐍 [Python 3.14](https://www.python.org/)
+- 📡 `feedparser` + `requests` for RSS fetching (parallel, 12 workers)
 - 🤖 [OpenRouter](https://openrouter.ai/) LLM API for summaries & scoring
-- 🚀 [GitHub Actions](https://github.com/features/actions) for scheduled updates & Pages deployment
+- 🚀 [GitHub Actions](https://github.com/features/actions) for scheduled updates & Pages deployment (Node 24)
 
 ---
 
@@ -172,26 +175,23 @@ news-minimalist/
 ├── .github/
 │   └── workflows/
 │       ├── main.yml          # Scheduled news update + Pages deploy
-│       └── ci.yml            # PR / push CI build
+│       └── ci.yml            # PR / push CI build (+ Python syntax check)
 ├── data/
-│   ├── articles.json         # All articles
-│   ├── articles_by_id.json   # Fast ID lookup
-│   └── stats.json            # Stats + histogram
+│   ├── articles.json         # All articles (compact JSON)
+│   ├── stats.json            # Stats + histogram
+│   └── feed.xml              # Auto-generated RSS feed (top stories)
 ├── scripts/
-│   └── fetch_news.py         # RSS fetcher + AI summarizer
+│   └── fetch_news.py         # Parallel RSS fetcher + AI summarizer
 ├── src/
-│   ├── App.tsx               # Main React component
-│   ├── App.css               # App styles
-│   ├── components/ui/        # shadcn/ui components
-│   ├── hooks/                # React hooks
-│   ├── lib/                  # Utilities
-│   ├── index.css             # Global styles
+│   ├── App.tsx               # Main React component (dark-only UI)
+│   ├── index.css             # Tailwind v4 theme + custom styles
 │   └── main.tsx              # Entry point
 ├── index.html                # HTML template with SEO meta tags
-├── package.json              # Node dependencies
+├── eslint.config.js          # ESLint 10 flat config
+├── .gitignore
+├── package.json              # Minimal dependencies (react, lucide)
 ├── requirements.txt          # Python dependencies
-├── tailwind.config.js        # Tailwind config
-├── vite.config.ts            # Vite config
+├── vite.config.ts            # Vite 8 + Tailwind v4 plugin
 ├── tsconfig.json             # TypeScript config
 ├── robots.txt                # Search crawler rules
 ├── sitemap.xml               # Sitemap for indexers
@@ -213,7 +213,7 @@ news-minimalist/
 
 | Variable | Default / По умолчанию | Description / Описание |
 |----------|------------------------|------------------------|
-| `OPENROUTER_MODEL` | `qwen/qwen3-235b-a22b-2507` | LLM model for summaries / Модель для резюме |
+| `OPENROUTER_MODEL` | `qwen/qwen3.8-flash` | LLM model for summaries / Модель для резюме |
 | `MAX_SUMMARIES_PER_RUN` | `100` | Max summaries per run / Максимум резюме за запуск |
 | `MIN_SIGNIFICANCE_FOR_SUMMARY` | `3.9` | Minimum significance score to summarize / Минимальная значимость для резюме |
 
